@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ElvClient } from "@eluvio/elv-client-js/dist/ElvClient-min.js";
+// import { FrameClient } from "@eluvio/elv-client-js/dist/ElvFrameClient-min.js";
 import AuthorizationClient from "@eluvio/elv-client-js/src/AuthorizationClient";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
@@ -11,7 +12,7 @@ import logo from "./static/images/Eluvio Favicon full.png";
 const App = () => {
   const [search, setSearch] = useState("");
   const [pk, setPK] = useState();
-  const [objId, setObjId] = useState("");
+  // const [objId, setObjId] = useState("");
   const [libId, setLibId] = useState("");
   const [authToken, setAuthToken] = useState("");
   const [url, setUrl] = useState("");
@@ -27,8 +28,19 @@ const App = () => {
     client.SetSigner({ signer });
     return client;
   };
+  // const getFrameClient = () => {
+  //   const client = new FrameClient({ target: window.parent });
+  //   return client;
+  // };
   const genUrl = async () => {
     const client = await getClient({ pk });
+    window.da_client = client;
+    const urlParams = new URLSearchParams(window.location.search);
+    const pathParams = (window.location.hash || "")
+      .replace(/^#/, "")
+      .replace(/^\//, "")
+      .split("/");
+    const objId = urlParams.get("objectId") || pathParams[0];
     const libId = await client.ContentObjectLibraryId({
       objectId: objId,
     });
@@ -44,6 +56,8 @@ const App = () => {
     });
     console.log(token);
     setAuthToken(token);
+    console.log("search", new URLSearchParams(window.location.search));
+    console.log("location hash", window.location.hash);
     // const searchTxt = "%22" + search.trim().split(" ").join("%20") + "%22";
 
     const url = `https://host-76-74-29-35.contentfabric.io/qlibs/${libId}/q/${objId}/rep/search?terms=(${search})&authorization=${token}&select=...,text,/public/asset_metadata/title&stats=f_celebrity_as_string,f_segment_as_string,f_object_as_string,f_display_title_as_string&start=0&limit=80&clips&clips_include_source_tags=false&sort=f_start_time@asc`;
@@ -81,7 +95,7 @@ const App = () => {
           }}
         />
       </div>
-      <div className="row mt-3">
+      {/* <div className="row mt-3">
         <ObjectInfoBox
           handleSubmitClick={(txt) => {
             console.log(txt);
@@ -89,7 +103,7 @@ const App = () => {
             setObjId(txt);
           }}
         />
-      </div>
+      </div> */}
       <div className="row mt-3">
         <SearchBox
           handleSubmitClick={(txt) => {
@@ -135,7 +149,7 @@ const App = () => {
                 <text style={{ width: "30%" }}>PK:</text>
                 <text style={{ width: "70%" }}>{pk}</text>
               </div>
-              <div
+              {/* <div
                 style={{
                   margin: 10,
                   width: "80%",
@@ -147,7 +161,7 @@ const App = () => {
               >
                 <text style={{ width: "30%" }}>Object txt:</text>
                 <text style={{ width: "70%" }}>{objId}</text>
-              </div>
+              </div> */}
               <div
                 style={{
                   margin: 10,
